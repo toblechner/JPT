@@ -1,0 +1,662 @@
+
+\chapter{Introduction}\label{chp:introduction}
+
+The Linear Ordering Problem \LOPN is an optimization problem, which was shown to be NP-hard by Garey and Johnson \cite{garey1979computers}. In its matrix form we are given an $(n,n)$-matrix and the goal is to find a permutation of the rows and columns such that the sum of superdiagonal entries is maximized. A study of the \LOPN polytope can be found in \cite{fis92}.\\
+
+The weighted Linear Ordering Problem \wLOPN is an extension of the linear Ordering Problem \LOPN, which was first introduced by J. Hautz, P. Hungerländer, T. Lechner, K. Maier and P. Rescher in \cite{gor19}. In this extended abstract, which has been published in the proceedings of the International Conference of the German Operations Research Society (GOR) 2019, we presented results from our Integer Linear Program \ILPN as well as a heuristic approach for solving this problem. In the near future, we aim to submit an extended version of this proceedings paper to a peer-reviewed journal. Further details on different \ILP formulations and its performances can be found in the bachelor thesis of Peter Rescher \cite{rescher20}. For deeper insights into heuristic approaches for solving the \wLOP , see the bachelor thesis of Jessica Hautz \cite{hautz20}.\\
+
+In this thesis, we analyze the polyhedral structure of the \wLOP. Therefore we examine the \ILP formulation proposed in \cite{gor19}. In Chapter \ref{chp2} we briefly discuss the definition of the \wLOP and one of its \ILP formulations. In Chapter \ref{chp:poly} we examine the \ILP formulation in more detail and deduce polyhedral characteristics of the \wLOP . Results and an outlook for possible future work can be found in Chapter \ref{chp:conclusion}.
+
+\chapter{Preliminaries: The weighted Linear Ordering Problem}\label{chp2}
+
+\section{Definition}
+
+A \wLOP instance consists of $n$ nodes and pairwise node weights $w_{ij},\ i,j \in [n]$. In addition, we are given individual node weights $w_{i},\ i \in [n]$. Then, the \wLOP can be defined as the following optimization problem
+
+\begin{align*}
+\max_{\pi \in \Pi_n} \sum_{\substack{i,j \in [n]\\i<j}}w_{ij}d_{ij}^{\pi},
+\end{align*}\label{def:wlop}%$ \refstepcounter{equation}(\theequation)\label{def:wlop},
+
+where $\Pi_{n}$ is the set of permutations of the 
+nodes $[n]$ and $d_{ij}^{\pi}$ is the sum of the weights of the nodes located between
+node $i$ and node $j$ in the permutation $\pi \in \Pi_n$, plus half of the weights of  $i$ and $j$:
+
+\begin{align*}
+d_{ij}^{\pi} = \begin{cases} \frac{w_i+w_j}{2} + \sum\limits_{\substack{k \in [n]\\\pi(i) <
+		\pi(k) < \pi(j)}}w_k,\qquad  & \pi(i) < \pi(j),\\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+
+\section{Integer Linear Program Formulation}
+
+For modelling the \wLOP as an \ILP, we use binary variables 
+\begin{align*} 
+x_{ikj} \in \{0,1\},\ i,j,k \in [n],\ i \neq k \neq j \neq i, %\label{var} 
+\end{align*}
+\begin{align*}
+x_{ikj} = \begin{cases} 1, \quad \text{if node $i$ is located before node $k$ and} \vspace{-5 pt}\\  
+\hspace{24 pt} \text{node $k$ is located before node $j$,} \\
+0, \quad \text{otherwise.} \end{cases}
+\end{align*}
+
+Any feasible ordering of the nodes has to fulfil the following constraints (we assume $i,j,k,l \in [n]$ pairwise different):
+\begin{align}
+&x_{ikj} + x_{jki} + x_{ijk} + x_{kji} + x_{jik} + x_{kij} = 1, \quad i, j, k \in [n], \label{c1}\\ 
+&x_{ijk} + x_{ikj} + x_{kij} - x_{ij\ell} \hspace{1 pt} - x_{i\ell j} \hspace{1 pt} - x_{\ell ij} \hspace{1 pt} = 0, \quad i, j, k, \ell \in [n].\label{c2}
+\end{align}
+
+We can then model the distances $ d_{ij},\  i,j \in [n],\ i \neq j,$ between nodes $i$ and $j$ as follows:
+
+\begin{align*}
+d_{ij} = \left(\frac{w_i+w_j}{2}\right)\frac{\sum_{\substack{k \in [n]\\ i \neq k \neq j }}\left(x_{kij} + x_{ikj} + x_{ijk}\right)}{n - 2} + \sum_{\substack{k \in [n]\\ i \neq k \neq j }}{x_{ikj} w_k}.
+\end{align*}
+
+In the end, the \ILP formulation for solving the \wLOP can be defined as follows:
+
+\begin{align}\label{ilp}
+\max \sum_{\substack{i,j \in [n]}} w_{ij}d_{ij}
+\qquad	\text{s. t. } \eqref{c1}- \eqref{c2}.
+\end{align}
+
+Throughout this thesis, we need to refer to specific constraints that we just introduced with certain indices. To ease such references, we will introduce two notations that will be used.
+
+\newpage
+\begin{notation}
+	A constraint in \ref{c1} with specific indices $i$, $j$, $k$ will be referred to as \\ constraint (\ref{c1}) - ($i$, $j$, $k$). \\
+\end{notation}
+
+%	constraint (\ref{c1})$_{(i,j,k)}$
+\begin{example}
+	The constraint of the form
+	\begin{equation*}
+	x_{132} + x_{231} + x_{123} + x_{321} + x_{213} + x_{312} = 1
+	\end{equation*}
+	will be referred to as constraint (\ref{c1}) - ($1$, $2$, $3$).
+\end{example}
+
+\begin{notation}
+	A constraint in \ref{c2} with specific indices $i$, $j$, $k$, $\ell$ will be referred to as constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$). \\
+\end{notation}
+
+\begin{example}
+	The constraint of the form
+	\begin{equation*}
+	x_{123} + x_{132} + x_{312} - x_{124} - x_{142} - x_{412}  = 0
+	\end{equation*}
+	will be referred to as constraint (\ref{c2}) - ($1$, $2$, $3$, $4$).
+\end{example}
+	
+
+
+\chapter{Polyhedral study of the weighted Linear Ordering Problem} \label{chp:poly}
+
+In this chapter, we want to study the characteristics of the \ILP formulation \ref{ilp} of the \wLOP. We are interested in the dimension of this polytope for a given instance size $n$. We can clearly see, that we need $n(n-1)(n-2)$ binary variables $x_{ikj}$ for an instance with $n$ objects, due to the three pairwise different indices. Now we need to investigate what the rank of the constraint matrix is, which is defined by \ref{c1} and \ref{c2}.
+
+\section{Connections between constraints}\label{con-con}
+
+\vspace{0.5 cm}
+
+\begin{lemma}[Symmetry of constraints in \ref{c2}]\label{sym}
+	For pairwise different $i$, $j$, $k$, $\ell$ $\in$ $[n]$ constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$) and constraint (\ref{c2}) - ($i$, $j$, $\ell$, $k$) are equivalent.
+\end{lemma}
+
+\begin{proof}
+	By multiplying constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$) by $<(-1)$, we obtain constraint (\ref{c2}) - ($i$, $j$, $\ell$, $k$).
+	
+\end{proof}
+
+\newpage
+\begin{lemma}[Transitivity of constraints in \ref{c2}] \label{lemtrans}
+	For pairwise different $i$, $j$, $k$, $\ell$, $m$ $\in$ $[n]$, constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$), constraint (\ref{c2}) - ($i$, $j$, $k$, $m$) and constraint (\ref{c2}) - ($i$, $j$, $\ell$, $m$) are linearly dependent.
+\end{lemma}
+
+\begin{proof}
+	By subtracting constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$) from constraint (\ref{c2}) - ($i$, $j$, $k$, $m$), we obtain constraint (\ref{c2}) - ($i$, $j$, $\ell$, $m$).
+	
+	\begin{align*}
+	& &x_{ijk}\hspace{3 pt} + x_{ikj}\hspace{3 pt} + x_{kij}\hspace{3 pt} - x_{ijm} - x_{imj} - x_{mij} &&= 0 \\
+	&(-) &x_{ijk}\hspace{3 pt} + x_{ikj}\hspace{3 pt} + x_{kij}\hspace{3 pt} - x_{ij\ell}\hspace{4 pt} - x_{i\ell j}\hspace{4 pt} - x_{\ell ij} \hspace{4 pt} &&= 0 \\
+	& &\rule{7,1 cm}{1 pt} &&\\
+	& &x_{ijm} + x_{imj} + x_{mij} - x_{ij\ell}\hspace{4 pt} - x_{i\ell j}\hspace{4 pt} - x_{\ell ij} \hspace{4 pt} &&= 0
+	\end{align*}
+\end{proof}
+
+\begin{lemma}[Reduction of the three node permutation constraints]
+	Given all constraints \ref{c2} and one of the constraints in \ref{c1}, all remaining constraints in \ref{c1} are linear combinations.
+\end{lemma}
+
+\begin{proof}
+	W.l.o.g. we choose any constraint (\ref{c1}) - ($i$, $j$, $k$) with fixed pairwise different indices $i$, $j$, $k$ $\in$ $[n]$. 
+	\begin{align}
+	&x_{ikj} + x_{jki} + x_{ijk} + x_{kji} + x_{jik} + x_{kij} = 1. \label{p1}
+	\end{align}
+	Now we can construct any arbitrary constraint (\ref{c1}) - ($\overset{\sim}{i}$, $\overset{\sim}{j}$, $\overset{\sim}{k}$) with pairwise different $\overset{\sim}{i}$, $\overset{\sim}{j}$, $\overset{\sim}{k}$ $\in$ $[n]$. For a complete understanding of this proof we consider the case $i \neq \overset{\sim}{i}$, $j \neq \overset{\sim}{j}$, $k \neq \overset{\sim}{k}$. In cases of equality, the corresponding substitutions are simply superfluous. By using constraint (\ref{c2}) - ($i$, $j$, $k$, $\overset{\sim}{k}$) and constraint (\ref{c2}) - ($j$, $i$, $k$, $\overset{\sim}{k}$), we obtain the equations
+	\begin{align}
+	&x_{ijk} + x_{ikj} + x_{kij} = x_{ij\overset{\sim}{k}} + x_{i\overset{\sim}{k}j} + x_{\overset{\sim}{k}ij}, \label{c3}\\ 
+	&x_{jik} + x_{jki} + x_{kji} = x_{ji\overset{\sim}{k}} + x_{j\overset{\sim}{k}i} + x_{\overset{\sim}{k}ji}.\label{c4}
+	\end{align}
+	We can now substitute (\ref{c3}) and (\ref{c4}) in (\ref{p1}) to obtain
+	\begin{align}
+	&x_{i\overset{\sim}{k}j} + x_{j\overset{\sim}{k}i} + x_{ij\overset{\sim}{k}} + x_{\overset{\sim}{k}ji} + x_{ji\overset{\sim}{k}} + x_{\overset{\sim}{k}ij} = 1. \label{p2}
+	\end{align}
+	\newpage
+	By using constraint (\ref{c2}) - ($i$,$\overset{\sim}{k}$,$j$,$\overset{\sim}{j}$) and constraint (\ref{c2}) - ($\overset{\sim}{k}$,$i$,$j$,$\overset{\sim}{j}$), we obtain the equations
+	\begin{align}
+	&x_{i\overset{\sim}{k}j} + x_{ij\overset{\sim}{k}} + x_{ji\overset{\sim}{k}} = x_{i\overset{\sim}{k}\overset{\sim}{j}} + x_{i\overset{\sim}{j}\overset{\sim}{k}} + x_{i\overset{\sim}{k}\overset{\sim}{j}},  \label{c5}\\ 
+	&x_{\overset{\sim}{k}ij} + x_{\overset{\sim}{k}ji} + x_{j\overset{\sim}{k}i} = x_{\overset{\sim}{k}i\overset{\sim}{j}} + x_{\overset{\sim}{k}\overset{\sim}{j}i} + x_{\overset{\sim}{k}i\overset{\sim}{j}}.  \label{c6}
+	\end{align}
+	We can now substitute (\ref{c5}) and (\ref{c6}) in (\ref{p2}) to obtain
+	\begin{align}
+	&x_{i\overset{\sim}{k}\overset{\sim}{j}} + x_{\overset{\sim}{j}\overset{\sim}{k}i} + x_{i\overset{\sim}{j}\overset{\sim}{k}} + x_{\overset{\sim}{k}\overset{\sim}{j}i} + x_{\overset{\sim}{j}i\overset{\sim}{k}} + x_{\overset{\sim}{k}i\overset{\sim}{j}} = 1. \label{p3}
+	\end{align}
+	By using constraint (\ref{c2}) - ($\overset{\sim}{j}$,$\overset{\sim}{k}$,$i$,$\overset{\sim}{i}$) and constraint (\ref{c2}) - ($\overset{\sim}{k}$,$\overset{\sim}{j}$,$i$,$\overset{\sim}{i}$), we obtain the equations
+	\begin{align}
+	&x_{\overset{\sim}{j}\overset{\sim}{k}i} + x_{\overset{\sim}{j}i\overset{\sim}{k}} + x_{i\overset{\sim}{j}\overset{\sim}{k}} = x_{\overset{\sim}{j}\overset{\sim}{k}\overset{\sim}{i}} + x_{\overset{\sim}{j}\overset{\sim}{i}\overset{\sim}{k}} + x_{\overset{\sim}{i}\overset{\sim}{j}\overset{\sim}{k}},  \label{c7}\\ 
+	&x_{\overset{\sim}{k}\overset{\sim}{j}i} + x_{\overset{\sim}{k}i\overset{\sim}{j}} + x_{i\overset{\sim}{k}\overset{\sim}{j}} = x_{\overset{\sim}{k}\overset{\sim}{j}\overset{\sim}{i}} + x_{\overset{\sim}{k}\overset{\sim}{i}\overset{\sim}{j}} + x_{\overset{\sim}{i}\overset{\sim}{k}\overset{\sim}{j}}.  \label{c8}
+	\end{align}
+	We can now substitute (\ref{c7}) and (\ref{c8}) in (\ref{p3}) to obtain
+	\begin{align*}
+	&x_{\overset{\sim}{i}\overset{\sim}{k}\overset{\sim}{j}} + x_{\overset{\sim}{j}\overset{\sim}{k}\overset{\sim}{i}} + x_{\overset{\sim}{i}\overset{\sim}{j}\overset{\sim}{k}} + x_{\overset{\sim}{k}\overset{\sim}{j}\overset{\sim}{i}} + x_{\overset{\sim}{j}\overset{\sim}{i}\overset{\sim}{k}} + x_{\overset{\sim}{k}\overset{\sim}{i}\overset{\sim}{j}} = 1.
+	\end{align*}
+	This is constraint (\ref{c1}) - ($\overset{\sim}{i}$, $\overset{\sim}{j}$, $\overset{\sim}{k}$), which we wanted to construct.
+\end{proof}
+
+\newpage
+
+\begin{lemma}[6 constraints dependency in \ref{c2}] \label{lem6}
+	The following 6 constraints are linearly dependent.
+	\begin{align}
+	&x_{ijk} + x_{ikj} + x_{kij} - x_{ijl} \hspace{1 pt}- x_{ilj} \hspace{1 pt}- x_{lij} = 0, \label{s1} \\
+	&x_{ikj} + x_{ijk} + x_{jik} - x_{ikl} - x_{ilk} - x_{lik} = 0, \label{s2} \\
+	&x_{ilj} \hspace{2 pt}+ x_{ijl} \hspace{2 pt}+ x_{jil}\hspace{2 pt} - x_{ilk} - x_{ikl} - x_{kil} = 0, \label{s3} \\
+	&x_{jik} + x_{jki} + x_{kji} - x_{jil} \hspace{1 pt}- x_{jli} \hspace{2 pt}- x_{lji} = 0, \label{s4} \\
+	&x_{kij} + x_{kji} + x_{jki} - x_{kil} - x_{kli} - x_{lki} \hspace{1 pt}= 0, \label{s5} \\
+	&x_{lij} \hspace{2 pt}+ x_{lji} \hspace{2 pt}+ x_{jli} \hspace{2 pt}- x_{lik} - x_{lki} - x_{kli} \hspace{1 pt}= 0. \label{s6}
+	\end{align}
+\end{lemma}
+
+\begin{proof}
+	Constraint \ref{s6} can be obtained as follows.
+	
+	\begin{align*}
+	&(-) &x_{ijk} + x_{ikj} + x_{kij} - x_{ijl} \hspace{1 pt}- x_{ilj} \hspace{1 pt}- x_{lij} = 0, \hspace{19 pt}\\
+	&(+) &x_{ikj} + x_{ijk} + x_{jik} - x_{ikl} - x_{ilk} - x_{lik} = 0, \hspace{19 pt} \\
+	&(-) &x_{ilj} \hspace{2 pt}+ x_{ijl} \hspace{2 pt}+ x_{jil}\hspace{2 pt} - x_{ilk} - x_{ikl} - x_{kil} = 0, \hspace{19 pt}\\
+	&(-) &x_{jik} + x_{jki} + x_{kji} - x_{jil} \hspace{1 pt}- x_{jli} \hspace{2 pt}- x_{lji} = 0, \hspace{19 pt}\\
+	&(+) &x_{kij} + x_{kji} + x_{jki} - x_{kil} - x_{kli} - x_{lki} \hspace{1 pt}= 0, \hspace{19 pt}\\
+	& &\rule{7.3 cm}{1 pt} \hspace{19 pt}&&\\
+	& &x_{lij} \hspace{2 pt}+ x_{lji} \hspace{2 pt}+ x_{jli} \hspace{2 pt}- x_{lik} - x_{lki} - x_{kli} \hspace{1 pt}= 0. \hspace{19 pt}
+	\end{align*}
+\end{proof}
+\newpage
+\section{Characteristics of the weighted Linear Ordering Problem}\label{char}
+
+Now we know how the constraints are linearly dependent on each other. Next, we want to propose a construction scheme for a constraint matrix with independent rows for an arbitrary number of objects $n$. To do this efficiently, we first eliminate unnecessary constraints in \ref{c2} by exploiting the symmetry characteristic that we proved in \ref{sym}. Hence, we reduce constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$) and constraint (\ref{c2}) - ($i$, $j$, $\ell$, $k$) to one constraint by demanding $k<\ell$. To order the remaining constraints in \ref{c2}, we use the positional numeral system with base $n$, which will make it more convenient to work with the constraint in the upcoming section. To clarify this procedure, we consider the case $n=5$ as an example. The remaining constraints are then ordered as follows.
+\vspace{25 pt}
+\begin{table}[h]
+	\centering
+	\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{||c | c c c c||c | c c c c||c | c c c c||c | c c c c||c | c c c c||} 
+			\hline
+			Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ \\ [0.5ex] 
+			\hline\hline
+			1 & 1 & 2 & 3 & 4 & 13 & 2 & 1 & 3 & 4 & 25 & 3 & 1 & 2 & 4 & 37 & 4 & 1 & 2 & 3 & 49 & 5 & 1 & 2 & 3 \\ 
+			\hline
+			2 & 1 & 2 & 3 & 5 & 14 & 2 & 1 & 3 & 5 & 26 & 3 & 1 & 2 & 5 & 38 & 4 & 1 & 2 & 5 & 50 & 5 & 1 & 2 & 4 \\ 
+			\hline
+			3 & 1 & 2 & 4 & 5 & 15 & 2 & 1 & 4 & 5 & 27 & 3 & 1 & 4 & 5 & 39 & 4 & 1 & 3 & 5 & 51 & 5 & 1 & 3 & 4 \\ 
+			\hline
+			4 & 1 & 3 & 2 & 4 & 16 & 2 & 3 & 1 & 4 & 28 & 3 & 2 & 1 & 4 & 40 & 4 & 2 & 1 & 3 & 52 & 5 & 2 & 1 & 3 \\ 
+			\hline
+			5 & 1 & 3 & 2 & 5 & 17 & 2 & 3 & 1 & 5 & 29 & 3 & 2 & 1 & 5 & 41 & 4 & 2 & 1 & 5 & 53 & 5 & 2 & 1 & 4 \\ 
+			\hline
+			6 & 1 & 3 & 4 & 5 & 18 & 2 & 3 & 4 & 5 & 30 & 3 & 2 & 4 & 5 & 42 & 4 & 2 & 3 & 5 & 54 & 5 & 2 & 3 & 4 \\ 
+			\hline
+			7 & 1 & 4 & 2 & 3 & 19 & 2 & 4 & 1 & 3 & 31 & 3 & 4 & 1 & 2 & 43 & 4 & 3 & 1 & 2 & 55 & 5 & 3 & 1 & 2 \\ 
+			\hline
+			8 & 1 & 4 & 2 & 5 & 20 & 2 & 4 & 1 & 5 & 32 & 3 & 4 & 1 & 5 & 44 & 4 & 3 & 1 & 5 & 56 & 5 & 3 & 1 & 4 \\ 
+			\hline
+			9 & 1 & 4 & 3 & 5 & 21 & 2 & 4 & 3 & 5 & 33 & 3 & 4 & 2 & 5 & 45 & 4 & 3 & 2 & 5 & 57 & 5 & 3 & 2 & 4 \\ 
+			\hline
+			10 & 1 & 5 & 2 & 3 & 22 & 2 & 5 & 1 & 3 & 34 & 3 & 5 & 1 & 2 & 46 & 4 & 5 & 1 & 2 & 58 & 5 & 4 & 1 & 2 \\ 
+			\hline
+			11 & 1 & 5 & 2 & 4 & 23 & 2 & 5 & 1 & 4 & 35 & 3 & 5 & 1 & 4 & 47 & 4 & 5 & 1 & 3 & 59 & 5 & 4 & 1 & 3 \\ 
+			\hline
+			12 & 1 & 5 & 3 & 4 & 24 & 2 & 5 & 3 & 4 & 36 & 3 & 5 & 2 & 4 & 48 & 4 & 5 & 2 & 3 & 60 & 5 & 4 & 2 & 3 \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Ordering of the constraints for the case $n=5$.}
+\end{table}
+\vspace{10 pt}
+
+For a given number of objects $n$, there are $\frac{n(n-1)(n-2)(n-3)}{2}$ constraints left to choose from. The next task is to decide which constraints should be used and which are not necessary. The goal is to define a linearly independent base of constraints for each number of objects $n$.
+
+\newpage
+\begin{theorem}[Construction scheme for a reduced constraint matrix without reduction in rank for arbitrary $n$] \label{construction}
+	For every given $n>4$ the following subset of constraints contains all constraints of \ref{c2} in its span. We define this subset by going through all of the $\frac{n(n-1)(n-2)(n-3)}{2}$ constraints in ascending order. The concept is defined in the following pseudo-code.
+	
+%	\begin{algorithm}[H]
+%		\vspace{0.1cm}
+%		\ForEach{$i = 1$ to $3(n-1)$}{
+%			\ForEach{$j = 1$ to $n-3$}{constraint included
+%			}
+%			\ForEach{$j = 1$ to $\binom{n-3}{2}$}{constraint not included
+%			}
+%		}
+%		\ForEach{$i=3$ to $n-1$}{
+%			\ForEach{$j = 1$ to $i$}{
+%				\ForEach{$k = 1$ to $i-2$}{constraint not included}
+%				\ForEach{$k = 1$ to $n-i-1$}{constraint included}
+%				\ForEach{$k = 1$ to $\binom{n-3}{2}$}{constraint not included}
+%			}
+%			\ForEach{$j = 1$ to $n-i-1$}{
+%				\ForEach{$k = 1$ to $n-3$}{constraint included}
+%				\ForEach{$k = 1$ to $\binom{n-3}{2}$}{constraint not included}
+%			}
+%		}
+%		\caption{Construction scheme for linearly independent constraints}
+%		\label{constructionscheme}
+%	\end{algorithm}
+
+
+%	\begin{lstlisting}
+%	3(n-1) times: 		n-3 times:		1
+%				binom{n-3}{2} times:	0
+%	for i in {3, ... , n-1}:
+%		i times:	i-2 times:		0
+%				n-i-1 times:		1
+%				binom{n-3}{2} times:	0
+%
+%		n-i-1 times: 	n-3 times:		1
+%				binom{n-3}{2} times:	0			
+%	\end{lstlisting}
+
+	\textbf{Construction scheme of linearly independent constraints:}
+	\begin{align*}
+	&\text{$3(n-1)$ times}: && \\
+	&\hspace{50 pt} \text{$(n-3)$ \hspace{0.5 pt} times}:		&&\text{constraint included} \\
+	&\hspace{46 pt} \binom{n-3}{2}\text{ times}:	&&\text{constraint not included} \\
+	&\text{for $i$ in \{$3$, ... , $n-1$\}}: && \\
+	&\hspace{67 pt}\text{$i$ \hspace{16 pt} times}: && \\
+	&\hspace{123 pt}\text{$(i-2)$ \hspace{6.5 pt} times}: &&\text{constraint not included} \\
+	&\hspace{112 pt}\text{$(n-i-1)$ times}:		&&\text{constraint included} \\
+	&\hspace{116 pt}\binom{n-3}{2}\text{\hspace{6 pt} times}:	&&\text{constraint not included} \\
+	&\hspace{40 pt}\text{$(n-i-1)$ times}: && \\
+	&\hspace{120 pt}\text{$(n-3)$\hspace{10.5 pt} times}:		&&\text{constraint included} \\
+	&\hspace{116 pt}\binom{n-3}{2}\text{\hspace{6 pt} times}:	&&\text{constraint not included}
+	\end{align*}
+	
+\end{theorem}
+
+\vspace{15 pt}
+
+\begin{proof}
+	To prove that in fact all constraints of \ref{c2} are in the span of this subset, we can use Lemma \ref{lemtrans} and Lemma \ref{lem6}. We divide this proof into 2 parts. First we need to explain why the constraints marked with * are redundant and in the second part we consider the remaining constraints marked with **.
+	
+	\newpage
+	\textbf{Construction scheme of linearly independent constraints:}
+	\begin{align*}
+	&\text{$3(n-1)$ times}: && \\
+	&\hspace{50 pt} \text{$(n-3)$ \hspace{0.5 pt} times}:		&&\text{constraint included } \\
+	&\hspace{46 pt} \binom{n-3}{2}\text{ times}:	&&\text{constraint not included }* \\
+	&\text{for $i$ in \{$3$, ... , $n-1$\}}: && \\
+	&\hspace{67 pt}\text{$i$ \hspace{16 pt} times}: && \\
+	&\hspace{123 pt}\text{$(i-2)$ \hspace{6.5 pt} times}: &&\text{constraint not included }** \\
+	&\hspace{112 pt}\text{$(n-i-1)$ times}:		&&\text{constraint included } \\
+	&\hspace{116 pt}\binom{n-3}{2}\text{\hspace{6 pt} times}:	&&\text{constraint not included }* \\
+	&\hspace{40 pt}\text{$(n-i-1)$ times}: && \\
+	&\hspace{120 pt}\text{$(n-3)$\hspace{10.5 pt} times}:		&&\text{constraint included } \\
+	&\hspace{116 pt}\binom{n-3}{2}\text{\hspace{6 pt} times}:	&&\text{constraint not included }*
+	\end{align*}
+	
+%	\begin{lstlisting}
+%	3(n-1) times: 		n-3 times:	1
+%				binom{n-3}{2} times:	0 *
+%	for i in {3, ... , n-1}:
+%		i times:	i-2 times:		0 **
+%				n-i-1 times:		1
+%				binom{n-3}{2} times:	0 *
+%	
+%		n-i-1 times: 	n-3 times:		1
+%				binom{n-3}{2} times:	0 *
+%	\end{lstlisting}
+	
+\fbox{\textbf{Part 1:} Constraints marked with $*$ are redundant.} \\
+
+In order to explain why the constraints marked with * are redundant, we need to remember that we ordered the constraints using the positional numeral system with base $n$. That means that the constraints with indices $i,j,k,\ell$ can be divided into sets $S_{i,j}$, that start with the same first two indices $i$ and $j$ (see the $n=5$ example above). These sets consist of $\frac{(n-2)(n-3)}{2}$ constraints.
+Furthermore, $S_{i,j}$ contain smaller subsets $S_{i,j,k}$ of constraints with the same three starting indices $i$, $j$ and $k$. These subsets consist of $n-3$ constraints (\ref{c2}) - ($i$, $j$, $k$, $\ell$) with arbitrary $\ell$. Now we can use Lemma \ref{lemtrans} to construct all $\binom{n-3}{2}$ remaining constraints of the sets $S_{i,j}$ by only using the constraints of the subsets $S_{i,j,k}$. With this argument, all constraints marked with $*$ in the construction scheme are redundant and can be removed without decreasing the rank of the constraint matrix.
+	
+\newpage
+	\begin{table}[h]
+		\centering
+		\resizebox{\columnwidth}{!}{%
+			\begin{tabular}{||c | c c c c||c | c c c c||c | c c c c||c | c c c c||c | c c c c||} 
+				\hline
+				Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ \\ [0.5ex]
+				\hline\hline
+				1 & \cellcolor{-red!100!green}1 & \cellcolor{-red!100!green}2 & \cellcolor{-red!100!green}3 & \cellcolor{-red!100!green}4 & 13 & 2 & 1 & 3 & 4 & 25 & 3 & 1 & 2 & 4 & 37 & 4 & 1 & 2 & 3 & 49 & 5 & 1 & 2 & 3 \\ 
+				\hline
+				2 & \cellcolor{-red!100!green}1 & \cellcolor{-red!100!green}2 & \cellcolor{-red!100!green}3 & \cellcolor{-red!100!green}5 & 14 & 2 & 1 & 3 & 5 & 26 & 3 & 1 & 2 & 5 & 38 & 4 & 1 & 2 & 5 & 50 & 5 & 1 & 2 & 4 \\ 
+				\hline
+				3 & \cellcolor{-red!100!green}1 & \cellcolor{-red!100!green}2 & \cellcolor{-red!100!green}4 & \cellcolor{-red!100!green}5 & 15 & 2 & 1 & 4 & 5 & 27 & 3 & 1 & 4 & 5 & 39 & 4 & 1 & 3 & 5 & 51 & 5 & 1 & 3 & 4 \\ 
+				\hline
+				4 & \cellcolor{-red!80!green}1 & \cellcolor{-red!80!green}13 & \cellcolor{-red!80!green}12 & \cellcolor{-red!80!green}14 & 16 & 2 & 3 & 1 & 4 & 28 & 3 & 2 & 1 & 4 & 40 & 4 & 2 & 1 & 3 & 52 & 5 & 2 & 1 & 3 \\ 
+				\hline
+				5 & \cellcolor{-red!80!green}11 & \cellcolor{-red!80!green}13 & \cellcolor{-red!80!green}12 & \cellcolor{-red!80!green}15 & 17 & 2 & 3 & 1 & 5 & 29 & 3 & 2 & 1 & 5 & 41 & 4 & 2 & 1 & 5 & 53 & 5 & 2 & 1 & 4 \\ 
+				\hline
+				6 & \cellcolor{-red!80!green}11 & \cellcolor{-red!80!green}13 & \cellcolor{-red!80!green}14 & \cellcolor{-red!80!green}15 & 18 & 2 & 3 & 4 & 5 & 30 & 3 & 2 & 4 & 5 & 42 & 4 & 2 & 3 & 5 & 54 & 5 & 2 & 3 & 4 \\ 
+				\hline
+				7 & \cellcolor{-red!60!green}1 & \cellcolor{-red!60!green}4 & \cellcolor{-red!60!green}2 & \cellcolor{-red!60!green}3 & 19 & 2 & 4 & 1 & 3 & 31 & 3 & 4 & 1 & 2 & 43 & 4 & 3 & 1 & 2 & 55 & 5 & 3 & 1 & 2 \\ 
+				\hline
+				8 & \cellcolor{-red!60!green}1 & \cellcolor{-red!60!green}4 & \cellcolor{-red!60!green}2 & \cellcolor{-red!60!green}5 & 20 & 2 & 4 & 1 & 5 & 32 & 3 & 4 & 1 & 5 & 44 & 4 & 3 & 1 & 5 & 56 & 5 & 3 & 1 & 4 \\ 
+				\hline
+				9 & \cellcolor{-red!60!green}1 & \cellcolor{-red!60!green}4 & \cellcolor{-red!60!green}3 & \cellcolor{-red!60!green}5 & 21 & 2 & 4 & 3 & 5 & 33 & 3 & 4 & 2 & 5 & 45 & 4 & 3 & 2 & 5 & 57 & 5 & 3 & 2 & 4 \\ 
+				\hline
+				10 & \cellcolor{-red!40!green}1 & \cellcolor{-red!40!green}5 & \cellcolor{-red!40!green}2 & \cellcolor{-red!40!green}3 & 22 & 2 & 5 & 1 & 3 & 34 & 3 & 5 & 1 & 2 & 46 & 4 & 5 & 1 & 2 & 58 & 5 & 4 & 1 & 2 \\ 
+				\hline
+				11 & \cellcolor{-red!40!green}1 & \cellcolor{-red!40!green}5 & \cellcolor{-red!40!green}2 & \cellcolor{-red!40!green}4 & 23 & 2 & 5 & 1 & 4 & 35 & 3 & 5 & 1 & 4 & 47 & 4 & 5 & 1 & 3 & 59 & 5 & 4 & 1 & 3 \\ 
+				\hline
+				12 & \cellcolor{-red!40!green}1 & \cellcolor{-red!40!green}5 & \cellcolor{-red!40!green}3 & \cellcolor{-red!40!green}4 & 24 & 2 & 5 & 3 & 4 & 36 & 3 & 5 & 2 & 4 & 48 & 4 & 5 & 2 & 3 & 60 & 5 & 4 & 2 & 3 \\ 
+				\hline
+			\end{tabular}%
+		}
+		\caption{Visualization of the first few sets $S_{i,j}$, which start with the same two first indices.}
+	\end{table}
+	
+	\begin{table}[h]
+		\centering
+		\resizebox{\columnwidth}{!}{%
+			\begin{tabular}{||c | c c c c||c | c c c c||c | c c c c||c | c c c c||c | c c c c||} 
+				\hline
+				Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ \\ [0.5ex]
+				\hline\hline
+				1 & \cellcolor{-red!100!green}1 & \cellcolor{-red!100!green}2 & \cellcolor{-red!100!green}3 & \cellcolor{-red!100!green}4 & 13 & 2 & 1 & 3 & 4 & 25 & 3 & 1 & 2 & 4 & 37 & 4 & 1 & 2 & 3 & 49 & 5 & 1 & 2 & 3 \\ 
+				\hline
+				2 & \cellcolor{-red!100!green}1 & \cellcolor{-red!100!green}2 & \cellcolor{-red!100!green}3 & \cellcolor{-red!100!green}5 & 14 & 2 & 1 & 3 & 5 & 26 & 3 & 1 & 2 & 5 & 38 & 4 & 1 & 2 & 5 & 50 & 5 & 1 & 2 & 4 \\ 
+				\hline
+				3 & 1 & 2 & 4 & 5 & 15 & 2 & 1 & 4 & 5 & 27 & 3 & 1 & 4 & 5 & 39 & 4 & 1 & 3 & 5 & 51 & 5 & 1 & 3 & 4 \\ 
+				\hline
+				4 & \cellcolor{-red!80!green}1 & \cellcolor{-red!80!green}13 & \cellcolor{-red!80!green}12 & \cellcolor{-red!80!green}14 & 16 & 2 & 3 & 1 & 4 & 28 & 3 & 2 & 1 & 4 & 40 & 4 & 2 & 1 & 3 & 52 & 5 & 2 & 1 & 3 \\ 
+				\hline
+				5 & \cellcolor{-red!80!green}11 & \cellcolor{-red!80!green}13 & \cellcolor{-red!80!green}12 & \cellcolor{-red!80!green}15 & 17 & 2 & 3 & 1 & 5 & 29 & 3 & 2 & 1 & 5 & 41 & 4 & 2 & 1 & 5 & 53 & 5 & 2 & 1 & 4 \\ 
+				\hline
+				6 & 11 & 13 & 14 & 15 & 18 & 2 & 3 & 4 & 5 & 30 & 3 & 2 & 4 & 5 & 42 & 4 & 2 & 3 & 5 & 54 & 5 & 2 & 3 & 4 \\ 
+				\hline
+				7 & \cellcolor{-red!60!green}1 & \cellcolor{-red!60!green}4 & \cellcolor{-red!60!green}2 & \cellcolor{-red!60!green}3 & 19 & 2 & 4 & 1 & 3 & 31 & 3 & 4 & 1 & 2 & 43 & 4 & 3 & 1 & 2 & 55 & 5 & 3 & 1 & 2 \\ 
+				\hline
+				8 & \cellcolor{-red!60!green}1 & \cellcolor{-red!60!green}4 & \cellcolor{-red!60!green}2 & \cellcolor{-red!60!green}5 & 20 & 2 & 4 & 1 & 5 & 32 & 3 & 4 & 1 & 5 & 44 & 4 & 3 & 1 & 5 & 56 & 5 & 3 & 1 & 4 \\ 
+				\hline
+				9 & 1 & 4 & 3 & 5 & 21 & 2 & 4 & 3 & 5 & 33 & 3 & 4 & 2 & 5 & 45 & 4 & 3 & 2 & 5 & 57 & 5 & 3 & 2 & 4 \\ 
+				\hline
+				10 & \cellcolor{-red!40!green}1 & \cellcolor{-red!40!green}5 & \cellcolor{-red!40!green}2 & \cellcolor{-red!40!green}3 & 22 & 2 & 5 & 1 & 3 & 34 & 3 & 5 & 1 & 2 & 46 & 4 & 5 & 1 & 2 & 58 & 5 & 4 & 1 & 2 \\ 
+				\hline
+				11 & \cellcolor{-red!40!green}1 & \cellcolor{-red!40!green}5 & \cellcolor{-red!40!green}2 & \cellcolor{-red!40!green}4 & 23 & 2 & 5 & 1 & 4 & 35 & 3 & 5 & 1 & 4 & 47 & 4 & 5 & 1 & 3 & 59 & 5 & 4 & 1 & 3 \\ 
+				\hline
+				12 & 1 & 5 & 3 & 4 & 24 & 2 & 5 & 3 & 4 & 36 & 3 & 5 & 2 & 4 & 48 & 4 & 5 & 2 & 3 & 60 & 5 & 4 & 2 & 3 \\ 
+				\hline
+			\end{tabular}%
+		}
+		\caption{Visualization of the first few subsets $S_{i,j,k}$, which start with the same three first indices.}
+	\end{table}
+
+\begin{table}[h!]
+	\centering
+	\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{||c | c c c c||c | c c c c||c | c c c c||c | c c c c||c | c c c c||} 
+			\hline
+			Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ & Ordering & $i$ & $j$ & $k$ & $\ell$ \\ [0.5ex]
+			\hline\hline
+			1 & 1 & 2 & 3 & 4 & 13 & 2 & 1 & 3 & 4 & 25 & 3 & 1 & 2 & 4 & 37 & 4 & 1 & 2 & 3 & 49 & 5 & 1 & 2 & 3 \\ 
+			\hline
+			2 & 1 & 2 & 3 & 5 & 14 & 2 & 1 & 3 & 5 & 26 & 3 & 1 & 2 & 5 & 38 & 4 & 1 & 2 & 5 & 50 & 5 & 1 & 2 & 4 \\ 
+			\hline
+			3 & \cellcolor{red!75}1 & \cellcolor{red!75}2 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 15 & \cellcolor{red!75}2 & \cellcolor{red!75}1 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 27 & \cellcolor{red!75}3 & \cellcolor{red!75}1 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 39 & \cellcolor{red!75}4 & \cellcolor{red!75}1 & \cellcolor{red!75}3 & \cellcolor{red!75}5 & 51 & \cellcolor{red!75}5 & \cellcolor{red!75}1 & \cellcolor{red!75}3 & \cellcolor{red!75}4 \\ 
+			\hline
+			4 & 1 & 3 & 2 & 4 & 16 & 2 & 3 & 1 & 4 & 28 & 3 & 2 & 1 & 4 & 40 & 4 & 2 & 1 & 3 & 52 & 5 & 2 & 1 & 3 \\ 
+			\hline
+			5 & 1 & 3 & 2 & 5 & 17 & 2 & 3 & 1 & 5 & 29 & 3 & 2 & 1 & 5 & 41 & 4 & 2 & 1 & 5 & 53 & 5 & 2 & 1 & 4 \\ 
+			\hline
+			6 & \cellcolor{red!75}1 & \cellcolor{red!75}3 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 18 & \cellcolor{red!75}2 & \cellcolor{red!75}3 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 30 & \cellcolor{red!75}3 & \cellcolor{red!75}2 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & 42 & \cellcolor{red!75}4 & \cellcolor{red!75}2 & \cellcolor{red!75}3 & \cellcolor{red!75}5 & 54 & \cellcolor{red!75}5 & \cellcolor{red!75}2 & \cellcolor{red!75}3 & \cellcolor{red!75}4 \\ 
+			\hline
+			7 & 1 & 4 & 2 & 3 & 19 & 2 & 4 & 1 & 3 & 31 & 3 & 4 & 1 & 2 & 43 & 4 & 3 & 1 & 2 & 55 & 5 & 3 & 1 & 2 \\ 
+			\hline
+			8 & 1 & 4 & 2 & 5 & 20 & 2 & 4 & 1 & 5 & 32 & 3 & 4 & 1 & 5 & 44 & 4 & 3 & 1 & 5 & 56 & 5 & 3 & 1 & 4 \\ 
+			\hline
+			9 & \cellcolor{red!75}1 & \cellcolor{red!75}4 & \cellcolor{red!75}3 & \cellcolor{red!75}5 & 21 & \cellcolor{red!75}2 & \cellcolor{red!75}4 & \cellcolor{red!75}3 & \cellcolor{red!75}5 & 33 & \cellcolor{red!75}3 & \cellcolor{red!75}4 & \cellcolor{red!75}2 & \cellcolor{red!75}5 & 45 & \cellcolor{red!75}4 & \cellcolor{red!75}3 & \cellcolor{red!75}2 & \cellcolor{red!75}5 & 57 & \cellcolor{red!75}5 & \cellcolor{red!75}3 & \cellcolor{red!75}2 & \cellcolor{red!75}4 \\ 
+			\hline
+			10 & 1 & 5 & 2 & 3 & 22 & 2 & 5 & 1 & 3 & 34 & 3 & 5 & 1 & 2 & 46 & 4 & 5 & 1 & 2 & 58 & 5 & 4 & 1 & 2 \\ 
+			\hline
+			11 & 1 & 5 & 2 & 4 & 23 & 2 & 5 & 1 & 4 & 35 & 3 & 5 & 1 & 4 & 47 & 4 & 5 & 1 & 3 & 59 & 5 & 4 & 1 & 3 \\ 
+			\hline
+			12 & \cellcolor{red!75}1 & \cellcolor{red!75}5 & \cellcolor{red!75}3 & \cellcolor{red!75}4 & 24 & \cellcolor{red!75}2 & \cellcolor{red!75}5 & \cellcolor{red!75}3 & \cellcolor{red!75}4 & 36 & \cellcolor{red!75}3 & \cellcolor{red!75}5 & \cellcolor{red!75}2 & \cellcolor{red!75}4 & 48 & \cellcolor{red!75}4 & \cellcolor{red!75}5 & \cellcolor{red!75}2 & \cellcolor{red!75}3 & 60 & \cellcolor{red!75}5 & \cellcolor{red!75}4 & \cellcolor{red!75}2 & \cellcolor{red!75}3 \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Visualization of constraints $*$ that are shown redundant.}
+\end{table}
+
+\fbox{\textbf{Part 2:} Constraints marked with $**$ are redundant.} \\
+
+To prove redundancy of the constraints marked with $**$, we go through all of the constraints which start with the same index (starting with $i=1$). In each set of constraints starting with the same index we determine which constraints can already be constructed by using Lemma \ref{lem6} and by only using constraints that we already considered, i.e. , only using constraints that start with indices smaller than $i$. Constraint reductions of the form $**$ only start occurring for $i \geq 4$. To better illustrate, let us reformulate Lemma \ref{lem6}.
+
+\begin{corollary}\label{cor1}
+	For all $i, j, k, \ell \in [n]$ constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$) can be constructed with constraint (\ref{c2}) - ($j$, $k$, $\ell$, $i$),  constraint (\ref{c2}) - ($j$, $\ell$, $k$, $i$), constraint (\ref{c2}) - ($j$, $i$, $k$, $\ell$), constraint (\ref{c2}) - ($k$, $j$, $\ell$, $i$) and constraint (\ref{c2}) - ($\ell$, $j$, $k$, $i$).
+\end{corollary}
+
+Therefore we can further deduce the statement: 
+
+\begin{corollary}\label{cor2}
+	If all constraints starting with the first index $j$, $k$ and $\ell$ are constructable with the current set of constraints, then constraints (\ref{c2}) - ($i$, $j$, $k$, $\ell$) are also constructable for arbitrary index $i$.
+\end{corollary}
+
+Again, we need to remember that the constraints are ordered using the positional numeral system with base $n$. Let us consider any arbitrary set of indices starting with $i \geq 4$ and assume, that all constraints starting with indices smaller than $i$ are already constructable. We can again divide this set into subsets of indices that start with the same first two indices $i$ and $j$. Now we see, that the first $i-1$ subsets fulfill $j \leq i$, which is necessary to use Corollary \ref{cor2} in this context of already constructable constraints. In these first $i-1$ subsets only the first $i-3$ constraints fulfill the remaining necessary conditions $k \leq i$ and $\ell \leq i$ (due to the ordering using the positional numeral system) for Corollary \ref{cor2} and are not already proven redundant in Part 1 of the proof. Therefore, we can remove these constraints without decreasing the rank of the constraint matrix as well.
+
+\end{proof}
+
+\begin{table}[h]
+	\centering
+	\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{||c | c c c c||c | c c c c||c | c c c c||c | c c c c||c | c c c c||} 
+			\hline
+			Ordering & i & j & k & l & Ordering & i & j & k & l & Ordering & i & j & k & l & Ordering & i & j & k & l & Ordering & i & j & k & l \\ [0.5ex] 
+			\hline\hline
+			1 & 1 & 2 & 3 & 4 & 13 & 2 & 1 & 3 & 4 & 25 & 3 & 1 & 2 & 4 & 37 & \cellcolor{red!75}4 & \cellcolor{red!75}1 & \cellcolor{red!75}2 & \cellcolor{red!75}3 & 49 & \cellcolor{red!75}5 & \cellcolor{red!75}1 & \cellcolor{red!75}2 & \cellcolor{red!75}3 \\ 
+			\hline
+			2 & 1 & 2 & 3 & 5 & 14 & 2 & 1 & 3 & 5 & 26 & 3 & 1 & 2 & 5 & 38 & 4 & 1 & 2 & 5 & 50 & \cellcolor{red!75}5 & \cellcolor{red!75}1 & \cellcolor{red!75}2 & \cellcolor{red!75}4 \\ 
+			\hline
+			3 & \cellcolor{red!25}1 & \cellcolor{red!25}2 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 15 & \cellcolor{red!25}2 & \cellcolor{red!25}1 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 27 & \cellcolor{red!25}3 & \cellcolor{red!25}1 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 39 & \cellcolor{red!25}4 & \cellcolor{red!25}1 & \cellcolor{red!25}3 & \cellcolor{red!25}5 & 51 & \cellcolor{red!25}5 & \cellcolor{red!25}1 & \cellcolor{red!25}3 & \cellcolor{red!25}4 \\ 
+			\hline
+			4 & 1 & 3 & 2 & 4 & 16 & 2 & 3 & 1 & 4 & 28 & 3 & 2 & 1 & 4 & 40 & \cellcolor{red!75}4 & \cellcolor{red!75}2 & \cellcolor{red!75}1 & \cellcolor{red!75}3 & 52 & \cellcolor{red!75}5 & \cellcolor{red!75}2 & \cellcolor{red!75}1 & \cellcolor{red!75}3 \\ 
+			\hline
+			5 & 1 & 3 & 2 & 5 & 17 & 2 & 3 & 1 & 5 & 29 & 3 & 2 & 1 & 5 & 41 & 4 & 2 & 1 & 5 & 53 & \cellcolor{red!75}5 & \cellcolor{red!75}2 & \cellcolor{red!75}1 & \cellcolor{red!75}4 \\ 
+			\hline
+			6 & \cellcolor{red!25}1 & \cellcolor{red!25}3 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 18 & \cellcolor{red!25}2 & \cellcolor{red!25}3 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 30 & \cellcolor{red!25}3 & \cellcolor{red!25}2 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & 42 & \cellcolor{red!25}4 & \cellcolor{red!25}2 & \cellcolor{red!25}3 & \cellcolor{red!25}5 & 54 & \cellcolor{red!25}5 & \cellcolor{red!25}2 & \cellcolor{red!25}3 & \cellcolor{red!25}4 \\ 
+			\hline
+			7 & 1 & 4 & 2 & 3 & 19 & 2 & 4 & 1 & 3 & 31 & 3 & 4 & 1 & 2 & 43 & \cellcolor{red!75}4 & \cellcolor{red!75}3 & \cellcolor{red!75}1 & \cellcolor{red!75}2 & 55 & \cellcolor{red!75}5 & \cellcolor{red!75}3 & \cellcolor{red!75}1 & \cellcolor{red!75}2 \\ 
+			\hline
+			8 & 1 & 4 & 2 & 5 & 20 & 2 & 4 & 1 & 5 & 32 & 3 & 4 & 1 & 5 & 44 & 4 & 3 & 1 & 5 & 56 & \cellcolor{red!75}5 & \cellcolor{red!75}3 & \cellcolor{red!75}1 & \cellcolor{red!75}4 \\ 
+			\hline
+			9 & \cellcolor{red!25}1 & \cellcolor{red!25}4 & \cellcolor{red!25}3 & \cellcolor{red!25}5 & 21 & \cellcolor{red!25}2 & \cellcolor{red!25}4 & \cellcolor{red!25}3 & \cellcolor{red!25}5 & 33 & \cellcolor{red!25}3 & \cellcolor{red!25}4 & \cellcolor{red!25}2 & \cellcolor{red!25}5 & 45 & \cellcolor{red!25}4 & \cellcolor{red!25}3 & \cellcolor{red!25}2 & \cellcolor{red!25}5 & 57 & \cellcolor{red!25}5 & \cellcolor{red!25}3 & \cellcolor{red!25}2 & \cellcolor{red!25}4 \\ 
+			\hline
+			10 & 1 & 5 & 2 & 3 & 22 & 2 & 5 & 1 & 3 & 34 & 3 & 5 & 1 & 2 & 46 & 4 & 5 & 1 & 2 & 58 & \cellcolor{red!75}5 & \cellcolor{red!75}4 & \cellcolor{red!75}1 & \cellcolor{red!75}2 \\ 
+			\hline
+			11 & 1 & 5 & 2 & 4 & 23 & 2 & 5 & 1 & 4 & 35 & 3 & 5 & 1 & 4 & 47 & 4 & 5 & 1 & 3 & 59 & \cellcolor{red!75}5 & \cellcolor{red!75}4 & \cellcolor{red!75}1 & \cellcolor{red!75}3 \\ 
+			\hline
+			12 & \cellcolor{red!25}1 & \cellcolor{red!25}5 & \cellcolor{red!25}3 & \cellcolor{red!25}4 & 24 & \cellcolor{red!25}2 & \cellcolor{red!25}5 & \cellcolor{red!25}3 & \cellcolor{red!25}4 & 36 & \cellcolor{red!25}3 & \cellcolor{red!25}5 & \cellcolor{red!25}2 & \cellcolor{red!25}4 & 48 & \cellcolor{red!25}4 & \cellcolor{red!25}5 & \cellcolor{red!25}2 & \cellcolor{red!25}3 & 60 & \cellcolor{red!25}5 & \cellcolor{red!25}4 & \cellcolor{red!25}2 & \cellcolor{red!25}3 \\ 
+			\hline
+		\end{tabular}%
+	}
+	\caption{Visualization of constraints marked with $\textcolor{red!70}{*}$ and constraints marked with $\textcolor{red}{**}$ that are shown redundant.}
+\end{table}
+\newpage
+
+\begin{theorem}[Linearly independency of \ref{construction}] \label{lin}
+	The set of constraints $S$ defined in theorem \ref{construction} is linearly independent.
+\end{theorem}
+
+\begin{proof}
+	To prove that the constructed set of constraints is linearly independent, it is sufficient to show that the non-zero coefficient of the $x_{ijk}$ variable of highest order (again ordered using the positional numeral system regarding $i$, $j$, $k$) corresponds to a different $x_{ijk}$ variable in every constraint. If this is true, the matrix can be transformed into row-echelon form which does not have any rows with only zeros in it and therefore has full rank in rows. The permutation constraint is independent as well, due to it being the only constraint with its right side equal to 1.\\
+	
+	First, we need to determine which $x_{ijk}$ variable is of highest order with a non-zero coefficient in an arbitrary constraint (\ref{c2}) - ($i$, $j$, $k$, $\ell$). The answer to this question depends on the ordering of the indices $i, j, k$ and $\ell$. All possible orderings of the indices with corresponding variable of highest order are listed in the table below, whereas $k<l$ always holds, due to the constraint reduction because of the symmetry characteristic which has already been discussed in Lemma \ref{sym}.\\
+
+\begin{table}[h]
+	\centering
+		\begin{tabular}{||c | c ||} 
+			\hline
+			Ordering & maximum \\ [0.5ex] 
+			\hline\hline
+			$i<j<k<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$i<k<j<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$i<k<\ell<j$ & $x_{\ell ij}$ \\ 
+			\hline
+			$j<i<k<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$j<k<i<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$j<k<\ell<i$ & $x_{i\ell j}$ \\ 
+			\hline
+			$k<i<j<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$k<i<\ell<j$ & $x_{\ell ij}$ \\ 
+			\hline
+			$k<j<i<\ell$ & $x_{\ell ij}$ \\ 
+			\hline
+			$k<j<\ell<i$ & $x_{i\ell j}$ \\ 
+			\hline
+			$k<\ell<i<j$ & $x_{ij\ell}$ \\ 
+			\hline
+			$k<\ell<j<i$ & $x_{ij\ell}$ \\ 
+			\hline
+		\end{tabular}
+	\caption{All possible orderings of the indices with corresponding variable of highest order.}
+\end{table}
+	\newpage
+	Example for the  case $i<j<k<\ell$: i=1, j=2, k=3, l=4
+	\begin{equation*}
+	x_{123} + x_{132} + x_{312} - x_{124} - x_{142} - x_{412} = 0.
+	\end{equation*}
+	Variable of highest order with a non-zero coefficient is $x_{412}$ with coefficient $-1$. \\
+
+	We can already see that in many cases $x_{lij}$ is the variable of highest order with a non-zero coefficient and due to $k<l$, the coefficients are always $-1$. Now we need to remember how constraints $**$ have been shown redundant in Theorem \ref{construction}. In Corollary \ref{cor2} we already learned that constraints (\ref{c2}) - ($i$, $j$, $k$, $\ell$) with indices $j, k, \ell < i$ are redundant and therefore not part of the set of constraints which we are examining here. Hence, three cases can be dismissed as shown in the updated table below. \\
+	
+\begin{table}[h]
+	\centering
+	\begin{tabular}{||c | c ||} 
+		\hline
+		Ordering & maximum \\ [0.5ex] 
+		\hline\hline
+		$i<j<k<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		$i<k<j<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		$i<k<\ell<j$ & $x_{\ell ij}$ \\ 
+		\hline
+		$j<i<k<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		$j<k<i<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		\cellcolor{red!75}$j<k<\ell<i$ &\cellcolor{red!75} $x_{i\ell j}$ \\ 
+		\hline
+		$k<i<j<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		$k<i<\ell<j$ & $x_{\ell ij}$ \\ 
+		\hline
+		$k<j<i<\ell$ & $x_{\ell ij}$ \\ 
+		\hline
+		\cellcolor{red!75}$k<j<\ell<i$ &\cellcolor{red!75} $x_{i\ell j}$ \\ 
+		\hline
+		$k<\ell<i<j$ & $x_{ij\ell}$ \\ 
+		\hline
+		\cellcolor{red!75}$k<\ell<j<i$ &\cellcolor{red!75} $x_{ij\ell}$ \\ 
+		\hline
+	\end{tabular}
+	\caption{All possible orderings of the indices with corresponding variable of highest order.}
+\end{table}	
+	\newpage
+	At this moment we only have the case $k<\ell<i<j$ left, in which the variable of highest order is not $x_{\ell ij}$. Now we need to determine, if the same variable of highest order can occur in any of the other cases. But in this case, in which $x_{ij\ell}$ is the variable of highest order, $i < j$ holds. In all instances, in which $x_{lij}$ is the variable of highest order however, $\ell > i$ holds. Therefore ambiguity in the variable of highest order is not possible, because the first two indices of the variable are ordered differently compared to the remaining cases.\\
+	
+	In summary we just showed, that the variable of highest order with a non-zero coefficient is $x_{\ell ij}$ for all constraints with indices $i,j,k,\ell$ in the set constructed in Theorem \ref{construction}. Since we already showed in Part 1 of the proof of Theorem \ref{construction}, that only the subsets of constraints with the same first three indices are included in the set, the third index $k$ is not arbitrary for fixed first two indices $i$ and $j$. This especially implies, that the variables of highest order $x_{\ell ij}$ are indeed unique for each constraint and there is no ambiguity because of the third index $k$. Hence, the constraint matrix has full rank in rows.
+\end{proof}
+\newpage
+\begin{corollary}\label{rank}
+	The rank of the constraint matrix for a given number of objects $n$ including constraints \ref{c1} and \ref{c2} is $\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n$.
+\end{corollary}
+
+\begin{proof}
+	Simply count how many constraints are included in the construction scheme in \ref{construction} and add 1 because of one of the constraints in \ref{c1}.
+	
+	The sum of constraints, that the construction scheme in \ref{construction} includes can be calculated as follows.
+	
+	\begin{align*}
+	3(n&-1)(n-3) + \sum_{i=1}^{n-4}i(n-3) +\sum_{i=1}^{n-4}(2+i)(n-3-i) =\\
+	&= 3(n-1)(n-3)+ \frac{1}{2}(n-4)(n-3)(n-3) +\sum_{i=1}^{n-4}\big(2n-6+i(n-5)-i^2\big) \\
+	&= \Big(\frac{n^2}{2}-\frac{n}{2}+3\Big)(n-3) + (n-4)(2n-6) +\sum_{i=1}^{n-4}i(n-5)-\sum_{i=1}^{n-4}i^2 \\
+	&= \frac{n^3}{2} -2n^2+\frac{9}{2}n -9 + (n-4)(2n-6) +\frac{(n-5)(n-4)(n-3)}{2}- \sum_{i=1}^{n-4}i^2 \\[7pt]
+	&= \frac{n^3}{2} -2n^2+\frac{9}{2}n -9 + 2n^2-14n+24 +\frac{(n^2-9n+20)(n-3)}{2} \\[7pt]
+	& \hspace*{0.5cm}-\frac{(n-4)(n-3)(2n-7)}{6} \\[7pt]
+	&=\frac{n^3}{2}+\frac{19}{2}n-9-14n+15 +\frac{n^3-12n^2+47n-60}{2}-\frac{(n^2-7n+12)(2n-7)}{6} \\[7pt]
+	&=\frac{n^3}{2}+\frac{19}{2}n-9-14n+15 +\frac{n^3-12n^2+47n-60}{2}-\frac{2n^3-21n^2+73n-84}{6} \\[7pt]
+	&=\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n-1.
+	\end{align*} 
+	
+%	\begin{align*}
+%	&3(n-1)(n-3) \hspace{2 cm} +\underbrace{\sum_{i=1}^{n-4}i(n-3)} \hspace{2 cm} +\underbrace{\sum_{i=1}^{n-4}(2+i)(n-3-i)} &&= \\
+%	&\underbrace{3(n-1)(n-3) \hspace{1 cm}+ \frac{1}{2}(n-4)(n-3)(n-3)} \hspace{1 cm}+\underbrace{\sum_{i=1}^{n-4}(2n-6+i(n-5)-i^2)} &&= \\
+%	&(\frac{n^2}{2}-\frac{n}{2}+3)(n-3) \hspace{3 cm}+ (n-4)(2n-6) +\underbrace{\sum_{i=1}^{n-4}i(n-5)}-\sum_{i=1}^{n-4}i^2  &&= \\
+%	&\frac{n^3}{2} -2n^2+\frac{9}{2}n -9 \hspace{1 cm}+ (n-4)(2n-6) \hspace{1cm}+\frac{(n-5)(n-4)(n-3)}{2}-\underbrace{\sum_{i=1}^{n-4}i^2}  &&= \\
+%	&\frac{n^3}{2} -2n^2+\frac{9}{2}n -9 + 2n^2-14n+24 +\frac{(n^2-9n+20)(n-3)}{2}-\frac{(n-4)(n-3)(2n-7)}{6}  &&= \\
+%	&\frac{n^3}{2}+\frac{19}{2}n-9-14n+15 +\frac{n^3-12n^2+47n-60}{2}-\frac{(n^2-7n+12)(2n-7)}{6}  &&= \\
+%	&\frac{n^3}{2}+\frac{19}{2}n-9-14n+15 +\frac{n^3-12n^2+47n-60}{2}-\frac{2n^3-21n^2+73n-84}{6}  &&= \\
+%	&\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n-1 &&
+%	\end{align*}
+	
+	After adding 1 because of the single permutation constraint, the rank of the constraint matrix is $\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n$.
+	
+\end{proof}
+\newpage
+Note: For numbers of objects up to $n=12$ it is possible to verify the results by simply calculating the rank of the constraint matrix. From $n=13$ however, some programs already start running out of memory due to the fast growth of constraints with increasing $n$.
+
+\begin{corollary}[Dimension of the wLOP polytope]
+	The dimension of the wLOP polytope for a given number of objects $n \geq 4$ is $\frac{n^3}{3}+ \frac{n^2}{2} + \frac{n}{6}$.
+\end{corollary}
+
+\begin{proof}
+	The constraint matrix has $n(n-1)(n-2)=n^3-3n^2+2n$ columns (number of variables) and rank $\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n$ (see \ref{rank}). Therefore, there are $n^3-3n^2+2n - (\frac{2}{3}n^3-\frac{5}{2}n^2+\frac{11}{6}n) = \frac{n^3}{3}+ \frac{n^2}{2} + \frac{n}{6}$ free variables which corresponds to the dimension of the polytope.
+	
+\end{proof}
+
+Summarizing the previous results, the polyhedral characteristics of the wLOP with $n \leq 12$ objects are:
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{||c | c c c c c c c c c||} 
+		\hline
+		$n$ & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\ [0.5ex] 
+		\hline\hline
+		Number of variables & 24 & 60 & 120 & 210 & 336 & 504 & 720 & 990 & 1320 \\
+		\hline
+		Rank of the constraint matrix & 10 & 30 & 65 & 119 & 196 & 300 & 435 & 605 & 814 \\ 
+		\hline
+		Dimension of the polytope & 14 & 30 & 55 & 91 & 140 & 204 & 285 & 385 & 506 \\
+		\hline
+	\end{tabular}
+	\caption{Polyhedral characteristics of the wLOP for number of objects $n \leq 12$.}
+\end{table}
+
+The first thing we realized was, that our original \ILP formulation with its two types of constraints could have been defined more efficiently. In chapter \ref{con-con} we studied the connections between the constraints of the \ILP formulation. We managed to reduce $n(n-1)(n-2)$ constraints of type \ref{c1} to one single constraint. We also proved dependencies between 2, 3 and 6 constraints of type \ref{c2}. In chapter \ref{char} we combined all findings to develop a much more efficient way to define the \ILP. We even proved, that there are no unnecessary constraints left at all in this new formulation and showed linear independence. Additionally we deduced the dimension of the weighted linear ordering polytope for each number of objects $n$, which is $\frac{n^3}{3}+ \frac{n^2}{2} + \frac{n}{6}$. \\
+
+\chapter{Conclusion and Outlook}\label{chp:conclusion}
+
+In this thesis we tried to improve our understanding of the weighted Linear Ordering Problem \wLOPN in a more theoretical way. We used an existing Integer Linear Program \ILPN formulation obtained in \cite{gor19} of the \wLOP and tried to deduce polyhedral characteristics. \\
+
+%The first thing we realized was, that our original \ILP formulation with its two types of constraints could have been defined more efficiently. In chapter \ref{con-con} we studied the connections between the constraints of the \ILP formulation. We managed to reduce $n(n-1)(n-2)$ constraints of type \ref{c1} to one single constraint. We also proved dependencies between 2, 3 and 6 constraints of type \ref{c2}. In chapter \ref{char} we combined all findings to develop a much more efficient way to define the \ILP. We even proved, that there are no unnecessary constraints left at all in this new formulation and showed linear independence. Additionally we deduced the dimension of the weighted linear ordering polytope for each number of objects $n$, which is $\frac{n^3}{3}+ \frac{n^2}{2} + \frac{n}{6}$. \\
+
+First, we defined the \wLOP and the \ILP formulation we are studying in Chapter \ref{chp2}. In Chapter \ref{con-con}, we analyzed how the constraints of the \ILP formulation are connected and proposed a construction scheme for linearly independent constraints in Chapter \ref{char}. In the end we showed that the dimension of the weighted Linear Ordering polytope for $n$ objects is $\frac{n^3}{3}+ \frac{n^2}{2} + \frac{n}{6}$.\\
+
+For future work, it would be interesting to check, if this more efficient \ILP formulation provides better computational performance. For the polyhedral aspect, the study could be continued, especially focusing on the facetial structure of this polytope, which could improve computational performance even more. Besides studying other existing \ILP formulations, it would also make sense to investigate in the combinatoric background of the constraint dependencies, contrary to the algebraic approach shown in this thesis.
+
+

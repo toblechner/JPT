@@ -1,0 +1,37 @@
+\begin{thebibliography}{0}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+  	
+	\bibitem[Garey and Johnson(1979)]{garey1979computers}
+	M.~Garey and D.~Johnson.
+	\newblock \emph{Computers and Intractability: A Guide to the Theory of NP-completeness}.
+	\newblock Mathematical Sciences Series. W. H. Freeman, 1979.
+	\newblock ISBN 9780716710448.
+	\newblock URL \url{https://books.google.at/books?id=fjxGAQAAIAAJ}.
+
+\bibitem[Fishburn(1992)]{fis92}
+P.~Fishburn.
+\newblock Induced binary probabilities and the linear ordering polytope: a
+  status report.
+\newblock \emph{Mathematical Social Sciences}, 23\penalty0 (1):\penalty0
+  67--80, 1992.
+  
+  	\bibitem[Hautz et~al.(2019)Hautz, Hungerl\"ander, Lechner, Maier and Rescher]{gor19}
+  	J.~Hautz, P.~Hungerl\"ander, T.~Lechner, K.~Maier and P.~Rescher.
+  	\newblock The Weighted Linear Ordering Problem.
+  	\newblock \emph{Operations Research}, 2019.
+  	
+  	\bibitem[Rescher(2020)]{rescher20}
+  	P.~Rescher.
+  	\newblock {Exact Approaches for solving the Weighted Linear Ordering Problem}.
+  	\newblock Bachelor's thesis, Alpen-Adria-Universit\"at Klagenfurt, Austria, 2020.
+  	
+  	\bibitem[Hautz(2020)]{hautz20}
+  	J.~Hautz.
+  	\newblock {Heuristical Approaches for solving the Weighted Linear Ordering Problem}.
+  	\newblock Bachelor's thesis, Alpen-Adria-Universit\"at Klagenfurt, Austria, 2020.
+  	
+\end{thebibliography}

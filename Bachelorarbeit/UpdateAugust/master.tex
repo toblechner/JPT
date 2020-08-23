@@ -1,0 +1,284 @@
+\documentclass[12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+%\usepackage[USenglish]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{makeidx}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{stmaryrd}
+\usepackage{xspace}
+\usepackage{url}
+\usepackage{comment}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{colortbl}
+\usepackage{subfigure}
+\usepackage{appendix}
+\usepackage{sidecap}
+\usepackage{capt-of}
+\usepackage{savefnmark}
+\usepackage{longtable}
+\usepackage[pdftex]{lscape}
+\usepackage{afterpage}
+\usepackage{tikz}
+\usepackage{dsfont}
+\usepackage{morefloats}
+\usepackage{setspace}
+\usepackage{slashbox}
+\usepackage[oldenum,olditem]{paralist}
+\usepackage[final]{pdfpages}
+
+%\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{here}
+\usepackage{amsmath}
+\usepackage[algoruled]{algorithm2e}
+%\usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{textgreek}
+\usepackage{placeins}
+\usepackage[labelfont=bf]{caption}
+\usepackage{url}
+\def\UrlFont{\rmfamily}
+\usepackage{color}
+\allowdisplaybreaks
+\setlength{\parindent}{0pt}
+\newcommand{\RM}[1]{\MakeUppercase{\romannumeral #1}}
+\renewcommand{\arraystretch}{1.1}
+\usepackage{verbatimbox}
+\usepackage{standalone}
+\usepackage{pifont}
+\usepackage{colortbl}
+%\usepackage[textsize=tiny]{todonotes}
+\usepackage{enumerate} 
+\usepackage{memhfixc}
+\usepackage{hyphenat} 
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0.4pt}
+\usepackage{chngcntr}
+\counterwithout{equation}{chapter}
+\setlength\jot{6pt}
+\usepackage{pgf}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{backgrounds}
+\pgfdeclarelayer{myback}
+\pgfsetlayers{background,myback,main}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathmorphing,patterns}
+\usetikzlibrary{calc,patterns,decorations.markings}
+\usetikzlibrary{decorations.pathreplacing}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+\newcommand{\vars}[1]{\textsc{#1}}
+\newcommand{\meth}[1]{\texttt{\textbf{#1}}}
+\newcommand{\true}{\textbf{true}}
+\newcommand{\false}{\textbf{false}}
+
+\makeatletter
+\let\NAT@parse\undefined
+\makeatother
+
+\usepackage[sort,numbers]{natbib}
+\usepackage{afterpage}
+\usepackage{refcount}
+
+%\usepackage{algorithm2e}
+%\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+
+%pagelayout
+\usepackage[top=40pt]{geometry} 
+\oddsidemargin 15pt
+\evensidemargin 15pt
+\topmargin -32pt
+\textheight 590pt
+%\textwidth 460pt
+\def\baselinestretch{1.15}
+%\setheadsepline{.6pt} 
+\setlength{\headsep}{30pt}
+\newtheoremstyle{dotless}{}{}{}{}{\bfseries}{}{ }{}
+\theoremstyle{dotless}
+
+\usepackage{tikz, graphicx}
+\usetikzlibrary{chains,fit,shapes}
+\usetikzlibrary{decorations.text}
+
+\newcommand{\ASP}{{\tt (ASP)}\xspace}
+\newcommand{\ASPN}{{\tt ASP}\xspace}
+\newcommand{\DCF}{{\tt (DCFLP)}\xspace}
+\newcommand{\DCFN}{{\tt DCFLP}\xspace}
+\newcommand{\UCF}{{\tt (UCFLP)}\xspace}
+\newcommand{\UCFN}{{\tt UCFLP}\xspace}
+\newcommand{\BUCF}{{\tt (BUCFLP)}\xspace}
+\newcommand{\BUCFN}{{\tt BUCFLP}\xspace}
+\newcommand{\EUCF}{{\tt (EUCFLP)}\xspace}
+\newcommand{\EUCFN}{{\tt EUCFLP}\xspace}
+\newcommand{\diag}{\mbox{diag}}
+\newcommand{\SDP} {{\tt (SDP)}\xspace}
+\newcommand{\SDPN} {{\tt SDP}\xspace}
+\newcommand{\SDPb} {{\tt (SDP$_{\text{basic}}$)}\xspace}
+\newcommand{\SDPbN} {{\tt SDP$_{\text{basic}}$}\xspace}
+\newcommand{\SDPba}{{\tt (SDP)}\hspace{-0.08cm}}
+\newcommand{\SDPbaN}{{\tt SDP}\hspace{-0.08cm}}
+\newcommand{\IC}{{\tt (IC)}\xspace}
+\newcommand{\ICN}{{\tt IC}\xspace}
+\newcommand{\ILPN}{{\tt (ILP)}\xspace}
+\newcommand{\ILP}{{\tt ILP}\xspace}
+\newcommand{\MILP}{{\tt (MILP)}\xspace}
+\newcommand{\MILPN}{{\tt MILP}\xspace}
+\newcommand{\LP}{{\tt (LP)}\xspace}
+\newcommand{\LPN}{{\tt LP}\xspace}
+\newcommand{\SRF}{{\tt (SRFLP)}\xspace}
+\newcommand{\SRFN}{{\tt SRFLP}\xspace}
+\newcommand{\MRF}{{\tt (MRFLP)}\xspace}
+\newcommand{\MRFN}{{\tt MRFLP}\xspace}
+\newcommand{\SDPd} {{\tt (SDP$_{\text{strong}}$)}\xspace}
+\newcommand{\SDPdN} {{\tt SDP$_{\text{strong}}$}\xspace}
+\newcommand{\LOP}{{\tt LOP}\xspace}
+\newcommand{\LOPN}{{\tt (LOP)}\xspace}
+\newcommand{\QAP}{{\tt (QAP)}\xspace}
+\newcommand{\QAPN}{{\tt QAP}\xspace}
+\newcommand{\QAPsN}{{\tt QAPs}\xspace}
+\newcommand{\DCA}{{\tt (DCAP)}\xspace}
+\newcommand{\DCAN}{{\tt DCAP}\xspace}
+\newcommand{\LA}{{\tt (LA)}\xspace}
+\newcommand{\LAN}{{\tt LA}\xspace}
+\newcommand{\BUCFLP}{{\tt (BUCFLP)}\xspace}
+\newcommand{\CL}{{\tt (CCLP)}\xspace}
+\newcommand{\CLN}{{\tt CCLP}\xspace}
+\newcommand{\TSN}{{\tt TS}\xspace}
+\newcommand{\TS}{{\tt (TS)}\xspace}
+
+%\newcommand{\LOP}{{\tt (LOP)}\xspace}
+%\newcommand{\LOPN}{{\tt LOP}\xspace}
+\newcommand{\wLOPN}{{\tt (wLOP)}\xspace}
+\newcommand{\wLOP}{{\tt wLOP}\xspace}
+\newcommand{\VNS}{{\tt (VNS)}\xspace}
+\newcommand{\VNSN}{{\tt VNS}\xspace}
+%\newcommand{\TS}{{\tt (TS)}\xspace}
+%\newcommand{\TSN}{{\tt TS}\xspace}
+\newcommand{\SRFLP}{{\tt (SRFLP)}\xspace}
+\newcommand{\SRFLPN}{{\tt SRFLP}\xspace}
+% Theorem definitions
+\newtheorem{notation}{Notation}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{note}{Note}[chapter]
+\definecolor{UniBlue}{RGB}{220,255,255}
+\definecolor{UniLightBlue}{RGB}{242,255,255}%weiß
+\definecolor{UniDarkBlue}{RGB}{0,102,92}
+\definecolor{UniRed}{RGB}{128,0,110}
+\definecolor{aaublaudunkel}{RGB}{13,83,101}  %satte Farbe
+\definecolor{aaublau}{RGB}{31,112,132}		 %satte Farbe
+\definecolor{uniblaudunkel}{RGB}{92,179,222} %transparent
+\definecolor{uniblau}{RGB}{165,211,250}	     %transparent
+\definecolor{uniblauhell}{RGB}{232, 244, 253}%sehr hell
+%pseudocode
+\usepackage{algpseudocode}
+\usepackage{float}
+\newfloat{algorithm}{tp}{toa}
+\renewcommand*\Call[3]{\textproc{#1}(#2)}
+\usepackage{morefloats}
+\def\barroman#1{\sbox0{#1}\dimen0=\dimexpr\wd0+1pt\relax
+  \makebox[\dimen0]{\rlap{\vrule width\dimen0 height 0.06ex depth 0.06ex}%
+    \rlap{\vrule width\dimen0 height\dimexpr\ht0+0.03ex\relax 
+            depth\dimexpr-\ht0+0.09ex\relax}%
+    \kern.5pt#1\kern.5pt}}
+\usepackage{hyperref}
+\hypersetup{
+	pdftitle=Polyhedral Study of the Weighted Linear Ordering Problem,
+	pdfauthor=Tobias Lechner,
+	pdflang=english,
+	colorlinks = false,
+	linkbordercolor = {uniblau},
+	urlbordercolor = {uniblau},
+	citecolor = {uniblau},
+	citebordercolor = {uniblau}
+}
+
+\makeindex
+
+\begin{document}
+
+\frontmatter
+\begin{titlepage}
+\vspace*{0.5cm}
+  \begin{center}   
+\large \textbf{Tobias Lechner}
+  \end{center}
+\vspace{0.6cm}
+  \begin{center}
+ \Huge \textbf{Polyhedral Study of the Weighted Linear Ordering Problem} 
+  \end{center}
+\vspace{0.6cm}
+\begin{center}
+\huge  \textsc{Bachelor Thesis}
+\end{center}
+\vspace{0.6cm}
+\begin{center}
+\large submitted in fulfilment of the requirements for the degree of\\
+\large \textbf{Bachelor of Science}
+\end{center}
+\vspace{0.6cm}
+\begin{center}
+\large Alpen-Adria-Universität Klagenfurt\\
+%\LARGE Fakultät für  Technische Wissenschaften
+\end{center}
+\vspace{0.6cm}
+\begin{center}
+\large \textbf{Evaluator:}\\
+\large
+Assoc.Prof. MMag. DI. DDr. Philipp Hungerländer\\
+Alpen-Adria-Universität Klagenfurt\\
+Institut f\"{u}r Mathematik
+\end{center}
+\vspace{0.6cm}
+\begin{flushright} 
+Klagenfurt, \today
+\end{flushright}
+\end{titlepage}
+
+
+
+\thispagestyle {empty}
+\cleardoublepage
+\thispagestyle {empty}
+\thispagestyle{empty}
+\cleardoublepage
+\addcontentsline{toc}{section}{Abstract}
+\setcounter{page}{1}
+\include{abstract}
+\cleardoublepage
+%\addcontentsline{toc}{section}{Notation}
+%\include{Notation}
+%\cleardoublepage
+
+%\addcontentsline{toc}{section}{Acknowledgements}
+%\include{acknowledgements}
+%\nocite{*}
+
+\renewcommand{\contentsname}{Content}
+\tableofcontents
+\thispagestyle{empty}
+\cleardoublepage
+\thispagestyle{empty}
+\setcounter{page}{1}
+\mainmatter
+\pagestyle{fancy}
+\fancyhead[R]{\small\thepage}
+\fancyhead[L]{\ifthenelse{\isodd{\value{page}}}{Tobias Lechner}{Polyhedral Study of the Weighted Linear Ordering Problem}}
+\fancyfoot[L,R,C]{}
+%\renewcommand\thechapter{\Roman{chapter}}
+\include{main-part}
+\cleardoublepage
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliographystyle{abbrvnat}
+\renewcommand{\bibfont}{\normalsize} 
+\bibliography{cclp}
+
+\end{document}
